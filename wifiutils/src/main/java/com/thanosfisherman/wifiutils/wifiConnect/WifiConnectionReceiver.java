@@ -68,14 +68,12 @@ public final class WifiConnectionReceiver extends BroadcastReceiver
 
             switch (state)
             {
-                case COMPLETED:
-                case FOUR_WAY_HANDSHAKE:
-                    if (isAlreadyConnected(mWifiManager, of(mScanResult).next(scanResult -> scanResult.BSSID).get()))
-                    {
-                        handler.removeCallbacks(handlerCallback);
-                        mWifiConnectionCallback.successfulConnect();
-                    }
-                    break;
+                //All authentication completed.
+                case COMPLETED: {
+                    handler.removeCallbacks(handlerCallback);
+                    mWifiConnectionCallback.successfulConnect();
+                }
+                //This state indicates that client is not associated, but is likely to start looking for an access point.
                 case DISCONNECTED:
                     if (supl_error == WifiManager.ERROR_AUTHENTICATING)
                     {

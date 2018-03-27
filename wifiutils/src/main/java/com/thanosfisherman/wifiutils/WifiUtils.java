@@ -122,12 +122,6 @@ public final class WifiUtils implements WifiConnectorBuilder,
             }
             if (mSingleScanResult != null && mPassword != null)
             {
-                //Do I really need dis? Not sure yet
-                if (isAlreadyConnected(mWifiManager, mSingleScanResult.BSSID))
-                {
-                    mWifiConnectionCallback.successfulConnect();
-                    return;
-                }
                 if (connectToWifi(mContext, mWifiManager, mSingleScanResult, mPassword))
                     registerReceiver(mContext, mWifiConnectionReceiver.activateTimeoutHandler(mSingleScanResult),
                                      new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION));

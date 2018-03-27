@@ -1,0 +1,46 @@
+ext {
+    packageCloudVersion = "0.0.6"
+    localProp = new Properties()
+    fileName = 'local.properties'
+    if (project.rootProject.file(fileName).exists()) {
+        localProp.load(new FileInputStream(rootProject.file(fileName)))
+    }
+    pkgVersion = System.env.BITRISE_GIT_TAG != null ? System.env.BITRISE_GIT_TAG.replace("v", "") : "$rootProject.ext.publishVersionName"
+    packageCloudToken = System.env.PACKAGECLOUD_TOKEN != null ? System.env.PACKAGECLOUD_TOKEN : localProp["packageCloudToken"]
+
+    group = 'com.thanosfisherman.wifiutils'
+    packageCloudUrl = 'packagecloud+https://packagecloud.io/stone/pos-android-wifi-connection-manager'
+}
+
+ext.uploadArtifacts = { artifactId, repo, config ->
+    println("Artifact " + artifactId)
+    println("Package Version " + pkgVersion)
+    repo.mavenDeployer{
+        configuration = config.deployerJars
+        repository(url: packageCloudUrl) {
+            authentication(password: packageCloudToken)
+        }
+        pom.version = pkgVersion
+        pom.artifactId = artifactId
+        pom.groupId = group
+        pom.whenConfigured { pom ->
+            println("Current Dependencies ${pom.dependencies}")
+            pom.dependencies.each { dep ->
+                println("Processing ${dep}")
+                if (dep.getVersion() == "unspecified" && dep.getGroupId() == rootProject.name) {
+                    println("Updating Dependencies")
+                    dep.setGroupId(groupName)
+                    dep.setVersion(pkgVersion)
+                    println("Updated ${dep}")
+                }
+            }
+        }
+    }
+}
+
+afterEvaluate{
+    dependencies {
+        deployerJars "io.packagecloud.maven.wagon:maven-packagecloud-wagon:$packageCloudVersion"
+    }
+}
+

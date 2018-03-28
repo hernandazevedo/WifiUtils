@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
 apply from: 'upload_package_cloud.gradle'
 
 android {
@@ -21,11 +20,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    uploadArchives {
-        uploadArtifacts(project.name,repositories,configurations)
-    }
-
 
     compileOptions {
         encoding "UTF-8"

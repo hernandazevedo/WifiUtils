@@ -1,4 +1,4 @@
-
+apply plugin: 'maven'
 ext {
     packageCloudVersion = "0.0.6"
     localProp = new Properties()
@@ -39,6 +39,11 @@ ext.uploadArtifacts = { artifactId, repo, config ->
 }
 
 afterEvaluate{
+    android {
+        uploadArchives {
+            uploadArtifacts(project.name,repositories,configurations)
+        }
+    }
     dependencies {
         deployerJars "io.packagecloud.maven.wagon:maven-packagecloud-wagon:$packageCloudVersion"
     }

@@ -1,3 +1,4 @@
+
 ext {
     packageCloudVersion = "0.0.6"
     localProp = new Properties()
@@ -43,3 +44,10 @@ afterEvaluate{
     }
 }
 
+allprojects {
+    repositories {
+        configurations {
+            deployerJars
+        }
+    }
+}

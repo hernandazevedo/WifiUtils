@@ -7,9 +7,8 @@ ext {
     }
     pkgVersion = System.env.BITRISE_GIT_TAG != null ? System.env.BITRISE_GIT_TAG.replace("v", "") : "$rootProject.ext.publishVersionName"
     packageCloudToken = System.env.PACKAGECLOUD_TOKEN != null ? System.env.PACKAGECLOUD_TOKEN : localProp["packageCloudToken"]
-
+    packageCloudUrl = System.env.PACKAGECLOUD_URL != null ? System.env.PACKAGECLOUD_URL : localProp["packageCloudUrl"]
     group = 'com.thanosfisherman.wifiutils'
-    packageCloudUrl = 'packagecloud+https://packagecloud.io/stone/pos-android-wifi-connection-manager'
 }
 
 ext.uploadArtifacts = { artifactId, repo, config ->

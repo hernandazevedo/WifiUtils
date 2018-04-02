@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
+import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WpsInfo;
@@ -29,6 +30,7 @@ public final class ConnectorUtils {
     public static boolean isAlreadyConnected(@Nullable WifiManager wifiManager, @Nullable String bssid) {
         if (bssid != null && wifiManager != null) {
             if (wifiManager.getConnectionInfo() != null && wifiManager.getConnectionInfo().getBSSID() != null &&
+                    wifiManager.getConnectionInfo().getSupplicantState() == SupplicantState.COMPLETED &&
                     Objects.equals(bssid, wifiManager.getConnectionInfo().getBSSID())) {
                 wifiLog("Already connected to: " + wifiManager.getConnectionInfo().getSSID() + "  BSSID: " + wifiManager.getConnectionInfo().getBSSID());
                 return true;

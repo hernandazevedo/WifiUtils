@@ -3,6 +3,7 @@ package com.thanosfisherman.wifiutils.wifiConnect;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiManager;
@@ -52,7 +53,17 @@ public final class WifiConnectionReceiver extends BroadcastReceiver
     public void onReceive(Context context, @NonNull Intent intent)
     {
         final String action = intent.getAction();
-        if (Objects.equals(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION, action))
+        if (Objects.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION, action)) {
+            final NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+            if ( info.isConnected() ) {
+                if (isAlreadyConnected(mWifiManager, of(mScanResult).next(scanResult -> scanResult.BSSID).get()))
+                {
+                    handler.removeCallbacks(handlerCallback);
+                    mWifiConnectionCallback.successfulConnect();
+                }
+            }
+        }
+        else if (Objects.equals(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION, action))
         {
             final SupplicantState state = intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE);
             final int supl_error = intent.getIntExtra(WifiManager.EXTRA_SUPPLICANT_ERROR, -1);

@@ -29,7 +29,6 @@ import static com.thanosfisherman.elvis.Elvis.of;
 import static com.thanosfisherman.wifiutils.ConnectorUtils.cleanPreviousConfiguration;
 import static com.thanosfisherman.wifiutils.ConnectorUtils.connectToWifi;
 import static com.thanosfisherman.wifiutils.ConnectorUtils.connectWps;
-import static com.thanosfisherman.wifiutils.ConnectorUtils.isAlreadyConnected;
 import static com.thanosfisherman.wifiutils.ConnectorUtils.matchScanResult;
 import static com.thanosfisherman.wifiutils.ConnectorUtils.matchScanResultBssid;
 import static com.thanosfisherman.wifiutils.ConnectorUtils.matchScanResultSsid;
@@ -122,9 +121,12 @@ public final class WifiUtils implements WifiConnectorBuilder,
             }
             if (mSingleScanResult != null && mPassword != null)
             {
-                if (connectToWifi(mContext, mWifiManager, mSingleScanResult, mPassword))
+                if (connectToWifi(mContext, mWifiManager, mSingleScanResult, mPassword)) {
                     registerReceiver(mContext, mWifiConnectionReceiver.activateTimeoutHandler(mSingleScanResult),
-                                     new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION));
+                            new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION));
+                    registerReceiver(mContext, mWifiConnectionReceiver,
+                            new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION));
+                }
                 else
                     mWifiConnectionCallback.errorConnect();
             }

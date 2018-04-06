@@ -53,14 +53,16 @@ public final class WifiConnectionReceiver extends BroadcastReceiver
     public void onReceive(Context context, @NonNull Intent intent)
     {
         final String action = intent.getAction();
+        wifiLog("Connection Broadcast action: " + action);
         if (Objects.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION, action)) {
-            final NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-            if ( info.isConnected() ) {
-                if (isAlreadyConnected(mWifiManager, of(mScanResult).next(scanResult -> scanResult.BSSID).get()))
-                {
-                    handler.removeCallbacks(handlerCallback);
-                    mWifiConnectionCallback.successfulConnect();
-                }
+            /*
+                Note here we dont check if has internet connectivity, because we only validate
+                if the connection to the hotspot is active, and not if the hotspot has internet.
+             */
+            if (isAlreadyConnected(mWifiManager, of(mScanResult).next(scanResult -> scanResult.BSSID).get()))
+            {
+                handler.removeCallbacks(handlerCallback);
+                mWifiConnectionCallback.successfulConnect();
             }
         }
         else if (Objects.equals(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION, action))
@@ -75,7 +77,7 @@ public final class WifiConnectionReceiver extends BroadcastReceiver
                 return;
             }
 
-            wifiLog("Connection Broadcast action: " + state);
+            wifiLog("Connection Broadcast state: " + state);
 
             switch (state)
             {
